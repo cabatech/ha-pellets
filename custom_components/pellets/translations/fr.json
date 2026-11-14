@@ -1,0 +1,52 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Pellets",
+        "description": "Adresse de l'API de l'app HA - Pellets, par exemple http://<nom-hôte-de-l-app>:8234.",
+        "data": {
+          "url": "URL de l'API",
+          "poids_sac_kg": "Poids d'un sac (kg)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "API injoignable"
+    },
+    "abort": {
+      "already_configured": "Déjà configuré"
+    }
+  },
+  "entity": {
+    "sensor": {
+      "stock_kg": {
+        "name": "Stock"
+      },
+      "stock_sacs": {
+        "name": "Stock en sacs"
+      },
+      "autonomie": {
+        "name": "Autonomie"
+      },
+      "conso_moyenne": {
+        "name": "Conso moyenne"
+      },
+      "prix_moyen": {
+        "name": "Prix moyen"
+      },
+      "conso_hier": {
+        "name": "Conso hier"
+      }
+    },
+    "binary_sensor": {
+      "stock_bas": {
+        "name": "Stock bas"
+      }
+    },
+    "button": {
+      "destocker": {
+        "name": "Déstocker un sac"
+      }
+    }
+  }
+}

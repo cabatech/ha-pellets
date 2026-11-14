@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Mouvements · Gestion Pellets{% endblock %}
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-bold">Historique des mouvements</h1>
+    <div class="flex gap-2">
+        <a href="web/mouvements"
+           class="px-3 py-1 rounded text-sm {{ 'bg-emerald-600 text-white' if not type_filter else 'bg-gray-200' }}">Tous</a>
+        <a href="web/mouvements?type=destockage"
+           class="px-3 py-1 rounded text-sm {{ 'bg-emerald-600 text-white' if type_filter == 'destockage' else 'bg-gray-200' }}">Destockages</a>
+        <a href="web/mouvements?type=ajout"
+           class="px-3 py-1 rounded text-sm {{ 'bg-emerald-600 text-white' if type_filter == 'ajout' else 'bg-gray-200' }}">Achats</a>
+    </div>
+</div>
+
+{% if mouvements %}
+<div class="bg-white rounded-lg shadow overflow-x-auto">
+    <table class="w-full text-sm">
+        <thead class="bg-gray-50">
+            <tr>
+                <th class="text-left px-4 py-2">Date</th>
+                <th class="text-left px-4 py-2">Type</th>
+                <th class="text-right px-4 py-2">Sacs</th>
+                <th class="text-right px-4 py-2">Poids</th>
+                <th class="text-left px-4 py-2">Marque</th>
+                <th class="text-left px-4 py-2">Source</th>
+                <th class="text-left px-4 py-2">Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for m in mouvements %}
+            <tr class="border-t hover:bg-gray-50">
+                <td class="px-4 py-2 whitespace-nowrap">{{ m.date[:16] }}</td>
+                <td class="px-4 py-2">
+                    {% if m.type == 'destockage' %}
+                    <span class="px-2 py-0.5 rounded text-xs bg-amber-100 text-amber-800">destockage</span>
+                    {% elif m.type == 'ajout' %}
+                    <span class="px-2 py-0.5 rounded text-xs bg-emerald-100 text-emerald-800">ajout</span>
+                    {% else %}
+                    <span class="px-2 py-0.5 rounded text-xs bg-gray-100 text-gray-800">{{ m.type }}</span>
+                    {% endif %}
+                </td>
+                <td class="px-4 py-2 text-right font-mono {{ 'text-red-600' if m.sacs < 0 else 'text-emerald-600' }}">
+                    {{ '%+d'|format(m.sacs) }}
+                </td>
+                <td class="px-4 py-2 text-right font-mono {{ 'text-red-600' if m.poids_kg < 0 else 'text-emerald-600' }}">
+                    {{ '%+.1f'|format(m.poids_kg) }}kg
+                </td>
+                <td class="px-4 py-2">{{ m.marque_nom or "—" }}</td>
+                <td class="px-4 py-2 text-xs text-gray-500">{{ m.source }}</td>
+                <td class="px-4 py-2 text-gray-500 text-xs">{{ m.notes or "" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<p class="text-gray-500">Aucun mouvement.</p>
+{% endif %}
+{% endblock %}

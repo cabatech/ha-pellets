@@ -1,0 +1,22 @@
+name: HA - Pellets
+version: "2.0.0"
+slug: pellets
+description: Stock de pellets de bois (achats, déstockage, conso, autonomie)
+url: https://github.com/cabatech/ha-pellets
+arch:
+  - amd64
+  - aarch64
+init: false
+ingress: true
+ingress_port: 8234
+panel_icon: mdi:fire
+panel_title: Pellets
+# Lecture seule : import d'une base existante depuis /share/pellets/pellets.db au premier démarrage.
+map:
+  - type: share
+    read_only: true
+# Port désactivé par défaut : l'intégration passe par le réseau interne de HA.
+ports:
+  8234/tcp: null
+ports_description:
+  8234/tcp: API REST (optionnel, Ingress et l'intégration n'en ont pas besoin)

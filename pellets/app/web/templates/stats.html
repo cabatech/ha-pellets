@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block title %}Statistiques · Gestion Pellets{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-2">Statistiques</h1>
+<p class="text-sm text-gray-500 mb-6">
+    Période : <strong>{{ days }} derniers jours</strong> ·
+    Stock actuel : <strong>{{ "%.1f"|format(stock_kg) }} kg</strong> ({{ stock_sacs }} sacs) ·
+    Prix moyen : <strong>{{ "%.3f"|format(prix_moyen_kg or 0) }} €/kg</strong>
+</p>
+
+<!-- Sélecteur de période -->
+<div class="flex gap-2 mb-6">
+    {% for d in [30, 90, 180, 365, 730] %}
+    <a href="web/stats?days={{ d }}"
+       class="px-3 py-1 rounded text-sm {{ 'bg-emerald-600 text-white' if d == days else 'bg-gray-200 hover:bg-gray-300' }}">
+        {{ d }}j
+    </a>
+    {% endfor %}
+</div>
+
+<!-- KPIs période -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+    <div class="bg-white rounded-lg shadow p-4">
+        <div class="text-sm text-gray-500">Conso totale</div>
+        <div class="text-2xl font-bold">{{ "%.1f"|format(total_kg) }} kg</div>
+    </div>
+    <div class="bg-white rounded-lg shadow p-4">
+        <div class="text-sm text-gray-500">Sacs consommés</div>
+        <div class="text-2xl font-bold">{{ total_sacs }} sacs</div>
+    </div>
+    <div class="bg-white rounded-lg shadow p-4">
+        <div class="text-sm text-gray-500">Jours actifs</div>
+        <div class="text-2xl font-bold">{{ jours_conso }} j</div>
+    </div>
+</div>
+
+<!-- Graphique conso journalière -->
+<div class="bg-white rounded-lg shadow p-6 mb-6">
+    <h2 class="text-lg font-semibold mb-4">Consommation journalière</h2>
+    {% if labels %}
+    <canvas id="consoChart" height="80"></canvas>
+    <script>
+        new Chart(document.getElementById('consoChart').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: {{ labels | tojson }},
+                datasets: [{
+                    label: 'kg / jour',
+                    data: {{ kg | tojson }},
+                    backgroundColor: 'rgba(16, 185, 129, 0.6)',
+                    borderColor: 'rgb(5, 150, 105)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+    </script>
+    {% else %}
+    <p class="text-gray-500">Aucune donnée sur cette période.</p>
+    {% endif %}
+</div>
+
+<!-- Graphique cumul -->
+<div class="bg-white rounded-lg shadow p-6">
+    <h2 class="text-lg font-semibold mb-4">Cumul des pellets consommés (kg)</h2>
+    {% if labels %}
+    <canvas id="cumulChart" height="80"></canvas>
+    <script>
+        new Chart(document.getElementById('cumulChart').getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: {{ labels | tojson }},
+                datasets: [{
+                    label: 'Cumul kg',
+                    data: {{ cumul_kg | tojson }},
+                    borderColor: 'rgb(220, 38, 38)',
+                    backgroundColor: 'rgba(220, 38, 38, 0.1)',
+                    fill: true,
+                    tension: 0.2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+    </script>
+    {% else %}
+    <p class="text-gray-500">Aucune donnée sur cette période.</p>
+    {% endif %}
+</div>
+
+<p class="text-xs text-gray-400 mt-6">
+    💡 Pour croiser avec la température, voir phase suivante (intégration HA + corrélation T°).
+</p>
+{% endblock %}

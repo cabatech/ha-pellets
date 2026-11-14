@@ -1,0 +1,52 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Pellets",
+        "description": "URL of the HA - Pellets app API, e.g. http://<app-hostname>:8234.",
+        "data": {
+          "url": "API URL",
+          "poids_sac_kg": "Bag weight (kg)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Cannot connect to the API"
+    },
+    "abort": {
+      "already_configured": "Already configured"
+    }
+  },
+  "entity": {
+    "sensor": {
+      "stock_kg": {
+        "name": "Stock"
+      },
+      "stock_sacs": {
+        "name": "Stock bags"
+      },
+      "autonomie": {
+        "name": "Autonomy"
+      },
+      "conso_moyenne": {
+        "name": "Average consumption"
+      },
+      "prix_moyen": {
+        "name": "Average price"
+      },
+      "conso_hier": {
+        "name": "Consumption yesterday"
+      }
+    },
+    "binary_sensor": {
+      "stock_bas": {
+        "name": "Low stock"
+      }
+    },
+    "button": {
+      "destocker": {
+        "name": "Use one bag"
+      }
+    }
+  }
+}

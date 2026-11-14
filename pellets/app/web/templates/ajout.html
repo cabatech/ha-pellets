@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Nouvel achat · Gestion Pellets{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-6">+ Enregistrer un achat</h1>
+
+<form method="post" action="web/ajout" class="bg-white rounded-lg shadow p-6 max-w-2xl">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Date d'achat</label>
+            <input type="date" name="date_achat" value="{{ today }}" required
+                   class="w-full border border-gray-300 rounded px-3 py-2">
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Fournisseur</label>
+            <select name="fournisseur_nom" id="fournisseur_select"
+                    class="w-full border border-gray-300 rounded px-3 py-2">
+                <option value="">— Sélectionner ou laisser vide pour nouveau —</option>
+                {% for f in fournisseurs %}
+                <option value="{{ f.nom }}">{{ f.nom }}</option>
+                {% endfor %}
+                <option value="__NEW__">+ Nouveau fournisseur...</option>
+            </select>
+            <input type="text" name="fournisseur_nom_new" id="fournisseur_new"
+                   placeholder="Nom du nouveau fournisseur"
+                   class="w-full border border-gray-300 rounded px-3 py-2 mt-2 hidden">
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Marque existante</label>
+            <select name="marque_id" id="marque_select"
+                    class="w-full border border-gray-300 rounded px-3 py-2">
+                <option value="">— Aucune (ou nouvelle marque) —</option>
+                {% for m in marques %}
+                <option value="{{ m.id }}">{{ m.nom }} ({{ m.poids_kg_sac or "?" }}kg) — {{ m.fournisseur_nom or "?" }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Ou nouvelle marque</label>
+            <input type="text" name="nouvelle_marque_nom" placeholder="Nom de la marque"
+                   class="w-full border border-gray-300 rounded px-3 py-2">
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Nombre de sacs *</label>
+            <input type="number" name="sacs" min="1" required
+                   class="w-full border border-gray-300 rounded px-3 py-2">
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Poids d'un sac (kg) *</label>
+            <input type="number" name="poids_sac_kg" min="0.1" step="0.1" required
+                   class="w-full border border-gray-300 rounded px-3 py-2">
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Prix total payé (€) *</label>
+            <input type="number" name="prix_total_eur" min="0" step="0.01" required
+                   class="w-full border border-gray-300 rounded px-3 py-2">
+        </div>
+
+        <div class="md:col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+            <textarea name="notes" rows="2"
+                      class="w-full border border-gray-300 rounded px-3 py-2"></textarea>
+        </div>
+    </div>
+
+    <div class="mt-6 flex gap-3">
+        <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded shadow">
+            Enregistrer l'achat
+        </button>
+        <a href="./" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded">
+            Annuler
+        </a>
+    </div>
+</form>
+
+<script>
+    document.getElementById('fournisseur_select').addEventListener('change', (e) => {
+        document.getElementById('fournisseur_new').classList.toggle('hidden', e.target.value !== '__NEW__');
+    });
+</script>
+{% endblock %}

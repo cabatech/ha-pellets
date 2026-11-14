@@ -1,0 +1,9 @@
+/* Petits ajustements custom si besoin */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Empêcher le canvas de prendre tout l'espace vide */
+canvas {
+    max-height: 400px;
+}

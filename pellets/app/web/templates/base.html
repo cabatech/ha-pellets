@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full bg-gray-50">
+<head>
+    <meta charset="UTF-8">
+    <base href="{{ request.headers.get('x-ingress-path', '') }}/">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Gestion Pellets{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="static/styles.css">
+</head>
+<body class="h-full">
+<nav class="bg-emerald-700 text-white shadow-lg">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="flex items-center justify-between h-16">
+            <div class="flex items-center">
+                <span class="text-2xl mr-2">🔥</span>
+                <a href="./" class="text-xl font-bold">Gestion Pellets</a>
+            </div>
+            <div class="flex space-x-1">
+                <a href="./" class="px-3 py-2 rounded hover:bg-emerald-800">Dashboard</a>
+                <a href="web/ajout" class="px-3 py-2 rounded hover:bg-emerald-800">+ Achat</a>
+                <a href="web/lots" class="px-3 py-2 rounded hover:bg-emerald-800">Lots</a>
+                <a href="web/mouvements" class="px-3 py-2 rounded hover:bg-emerald-800">Mouvements</a>
+                <a href="web/stats" class="px-3 py-2 rounded hover:bg-emerald-800">Stats</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<main class="max-w-7xl mx-auto px-4 py-8">
+    {% block content %}{% endblock %}
+</main>
+
+<footer class="text-center text-gray-500 text-sm py-4">
+    Gestion Stock Pellets · v{{ version or "0.1.0" }}
+</footer>
+</body>
+</html>

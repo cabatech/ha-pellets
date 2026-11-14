@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Dashboard · Gestion Pellets{% endblock %}
+{% block content %}
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <!-- Stock kg -->
+    <div class="bg-white rounded-lg shadow p-6">
+        <div class="text-sm text-gray-500 mb-1">Stock</div>
+        <div class="text-3xl font-bold text-emerald-700">{{ "%.1f"|format(stock_kg) }} kg</div>
+        <div class="text-sm text-gray-600 mt-1">≈ {{ stock_sacs }} sacs</div>
+    </div>
+
+    <!-- Autonomie -->
+    <div class="bg-white rounded-lg shadow p-6">
+        <div class="text-sm text-gray-500 mb-1">Autonomie estimée</div>
+        {% if autonomie.jours %}
+        <div class="text-3xl font-bold text-amber-600">{{ "%.0f"|format(autonomie.jours) }} jours</div>
+        <div class="text-sm text-gray-600 mt-1">~{{ "%.1f"|format(autonomie.conso_moyenne_kg_jour) }} kg/j ({{ autonomie.methode }})</div>
+        {% else %}
+        <div class="text-3xl font-bold text-gray-400">—</div>
+        <div class="text-sm text-gray-600 mt-1">Pas assez d'historique</div>
+        {% endif %}
+    </div>
+
+    <!-- Prix moyen -->
+    <div class="bg-white rounded-lg shadow p-6">
+        <div class="text-sm text-gray-500 mb-1">Prix moyen d'achat</div>
+        {% if prix_moyen_kg %}
+        <div class="text-3xl font-bold text-blue-700">{{ "%.3f"|format(prix_moyen_kg) }} €/kg</div>
+        {% else %}
+        <div class="text-3xl font-bold text-gray-400">—</div>
+        <div class="text-sm text-gray-600 mt-1">Aucun achat</div>
+        {% endif %}
+    </div>
+
+    <!-- Coût total -->
+    <div class="bg-white rounded-lg shadow p-6">
+        <div class="text-sm text-gray-500 mb-1">Coût total</div>
+        <div class="text-3xl font-bold text-purple-700">{{ "%.2f"|format(cout_total_eur) }} €</div>
+    </div>
+</div>
+
+<!-- Conso 30j -->
+<div class="bg-white rounded-lg shadow p-6">
+    <h2 class="text-xl font-semibold mb-4">Conso des 30 derniers jours</h2>
+    {% if conso_30j %}
+    <canvas id="consoChart" height="80"></canvas>
+    <script>
+        const ctx = document.getElementById('consoChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: {{ conso_30j | map(attribute='jour') | map('string') | list | tojson }},
+                datasets: [{
+                    label: 'kg consommés',
+                    data: {{ conso_30j | map(attribute='kg_consommes') | list | tojson }},
+                    backgroundColor: 'rgba(16, 185, 129, 0.6)',
+                    borderColor: 'rgb(5, 150, 105)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true, title: { display: true, text: 'kg' } } }
+            }
+        });
+    </script>
+    {% else %}
+    <p class="text-gray-500">Aucun destockage enregistré sur les 30 derniers jours.</p>
+    {% endif %}
+</div>
+
+<!-- Actions rapides -->
+<div class="mt-6 flex gap-3">
+    <a href="web/ajout" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded shadow">
+        + Enregistrer un achat
+    </a>
+    <a href="web/stats" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow">
+        Voir les stats détaillées
+    </a>
+</div>
+{% endblock %}
