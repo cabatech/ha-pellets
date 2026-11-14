@@ -17,6 +17,7 @@ def mock_api(aioclient_mock, kg=370.0, jours=111.0):
     )
     aioclient_mock.get(f"{URL}/api/stats/prix-moyen", json={"prix_moyen_kg": 0.434})
     aioclient_mock.get(f"{URL}/api/stats/conso/summary", json={"kg_total": 15.0})
+    aioclient_mock.get(f"{URL}/api/lots", json=[{"id": 4, "poids_sac_kg": 10.0}])
     aioclient_mock.post(f"{URL}/api/mouvements", json={"id": 1}, status=201)
 
 
@@ -26,7 +27,7 @@ async def test_config_flow(hass, aioclient_mock):
         "pellets", context={"source": config_entries.SOURCE_USER}
     )
     result = await hass.config_entries.flow.async_configure(
-        result["flow_id"], {"url": URL + "/", "poids_sac_kg": 15}
+        result["flow_id"], {"url": URL + "/"}
     )
     assert result["type"] is FlowResultType.CREATE_ENTRY
     assert result["data"]["url"] == URL
@@ -35,7 +36,7 @@ async def test_config_flow(hass, aioclient_mock):
 async def test_entities_and_button(hass, aioclient_mock):
     hass.config.language = "fr"  # entity_id issus des noms traduits, comme en prod
     mock_api(aioclient_mock, kg=25.0, jours=None)
-    entry = MockConfigEntry(domain="pellets", data={"url": URL, "poids_sac_kg": 15.0})
+    entry = MockConfigEntry(domain="pellets", data={"url": URL})
     entry.add_to_hass(hass)
     assert await hass.config_entries.async_setup(entry.entry_id)
     await hass.async_block_till_done()
@@ -49,4 +50,5 @@ async def test_entities_and_button(hass, aioclient_mock):
         "button", "press", {"entity_id": "button.pellets_destocker_un_sac"}, blocking=True
     )
     posts = [c for c in aioclient_mock.mock_calls if c[0] == "POST"]
-    assert posts[0][2]["sacs"] == -1 and posts[0][2]["poids_kg"] == -15.0
+    assert posts[0][2]["sacs"] == -1
+    assert posts[0][2]["poids_kg"] == -10.0 and posts[0][2]["lot_id"] == 4  # dernier lot

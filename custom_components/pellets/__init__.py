@@ -10,6 +10,7 @@ import aiohttp
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from homeassistant.util import dt as dt_util
@@ -53,20 +54,31 @@ class PelletsCoordinator(DataUpdateCoordinator[dict]):
         except (aiohttp.ClientError, TimeoutError) as err:
             raise UpdateFailed(f"API Pellets injoignable : {err}") from err
 
-    async def async_destocker(self, sacs: int, poids_kg: float) -> None:
-        """Enregistre un déstockage puis rafraîchit les capteurs."""
+    async def async_destocker(self) -> None:
+        """Déstocke un sac du dernier lot acheté (son poids de sac), puis rafraîchit."""
+        try:
+            lots = await self._get("/api/lots", {"limit": 1})
+        except (aiohttp.ClientError, TimeoutError) as err:
+            raise HomeAssistantError(f"API Pellets injoignable : {err}") from err
+        if not lots:
+            raise HomeAssistantError("Aucun lot enregistré : saisir un achat d'abord")
+        lot = lots[0]
         payload = {
             "type": "destockage",
             "date": dt_util.now().isoformat(),
-            "sacs": -sacs,
-            "poids_kg": -poids_kg,
+            "sacs": -1,
+            "poids_kg": -lot["poids_sac_kg"],
+            "lot_id": lot["id"],
             "source": "ha_button",
             "notes": "Home Assistant",
         }
-        async with self.session.post(
-            f"{self.url}/api/mouvements", json=payload, timeout=aiohttp.ClientTimeout(total=10)
-        ) as resp:
-            resp.raise_for_status()
+        try:
+            async with self.session.post(
+                f"{self.url}/api/mouvements", json=payload, timeout=aiohttp.ClientTimeout(total=10)
+            ) as resp:
+                resp.raise_for_status()
+        except (aiohttp.ClientError, TimeoutError) as err:
+            raise HomeAssistantError(f"Déstockage refusé par l'API Pellets : {err}") from err
         await self.async_request_refresh()
 
 

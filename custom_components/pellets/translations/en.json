@@ -5,8 +5,7 @@
         "title": "Pellets",
         "description": "URL of the HA - Pellets app API, e.g. http://<app-hostname>:8234.",
         "data": {
-          "url": "API URL",
-          "poids_sac_kg": "Bag weight (kg)"
+          "url": "API URL"
         }
       }
     },

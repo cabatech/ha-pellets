@@ -22,6 +22,6 @@ Suivi d'un stock de pellets de bois dans Home Assistant.
 | Prix moyen | €/kg sur tous les achats |
 | Conso hier | kg déstockés la veille |
 | Stock bas | vrai si stock < 30 kg ou autonomie < 7 jours |
-| Déstocker un sac | enregistre la sortie d'un sac (poids réglé à la configuration) |
+| Déstocker un sac | enregistre la sortie d'un sac du dernier lot acheté (poids de sac du lot) |
 
 Les achats se saisissent dans l'interface web de l'app.

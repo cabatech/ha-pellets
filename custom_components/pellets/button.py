@@ -1,4 +1,4 @@
-"""Bouton « Déstocker un sac »."""
+"""Bouton « Déstocker un sac » (dernier lot acheté)."""
 
 from __future__ import annotations
 
@@ -7,7 +7,6 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from . import PelletsConfigEntry
-from .const import CONF_POIDS_SAC, DEFAULT_POIDS_SAC
 from .entity import PelletsEntity
 
 
@@ -21,5 +20,4 @@ class PelletsDestocker(PelletsEntity, ButtonEntity):
     _attr_icon = "mdi:sack"
 
     async def async_press(self) -> None:
-        data = self.coordinator.config_entry.data
-        await self.coordinator.async_destocker(1, data.get(CONF_POIDS_SAC, DEFAULT_POIDS_SAC))
+        await self.coordinator.async_destocker()
