@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.2 — 2026-11-14
+
+- Autonomie, prix moyen et conso d'hier gardent leurs statistiques à long terme (plus d'alerte « n'a plus de classe d'état »).
+
 ## 2.0.1 — 2026-11-14
 
 - « Déstocker un sac » prend le dernier lot acheté : poids du sac et rattachement au lot, sans réglage. Le champ « poids d'un sac » disparaît de la configuration.

@@ -52,3 +52,16 @@ async def test_entities_and_button(hass, aioclient_mock):
     posts = [c for c in aioclient_mock.mock_calls if c[0] == "POST"]
     assert posts[0][2]["sacs"] == -1
     assert posts[0][2]["poids_kg"] == -10.0 and posts[0][2]["lot_id"] == 4  # dernier lot
+
+
+async def test_all_sensors_keep_statistics(hass, aioclient_mock):
+    """Chaque capteur numérique a une state_class (sinon HA signale la perte des statistiques v1)."""
+    hass.config.language = "fr"
+    mock_api(aioclient_mock)
+    entry = MockConfigEntry(domain="pellets", data={"url": URL})
+    entry.add_to_hass(hass)
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+    sensors = [s for s in hass.states.async_all("sensor") if s.entity_id.startswith("sensor.pellets_")]
+    assert len(sensors) == 6
+    assert all(s.attributes.get("state_class") == "measurement" for s in sensors)

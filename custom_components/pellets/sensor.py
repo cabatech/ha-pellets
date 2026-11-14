@@ -42,6 +42,7 @@ SENSORS = (
         key="autonomie",
         device_class=SensorDeviceClass.DURATION,
         native_unit_of_measurement=UnitOfTime.DAYS,
+        state_class=SensorStateClass.MEASUREMENT,
         suggested_display_precision=0,
         value=lambda d: d["autonomie"]["jours"],
     ),
@@ -55,6 +56,7 @@ SENSORS = (
     PelletsSensorDescription(
         key="prix_moyen",
         native_unit_of_measurement="€/kg",
+        state_class=SensorStateClass.MEASUREMENT,
         suggested_display_precision=3,
         value=lambda d: d["prix"]["prix_moyen_kg"],
     ),
@@ -62,6 +64,7 @@ SENSORS = (
         key="conso_hier",
         device_class=SensorDeviceClass.WEIGHT,
         native_unit_of_measurement=UnitOfMass.KILOGRAMS,
+        state_class=SensorStateClass.MEASUREMENT,
         value=lambda d: d["hier"]["kg_total"],
     ),
 )

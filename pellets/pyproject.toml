@@ -1,6 +1,6 @@
 [project]
 name = "ha-pellets"
-version = "2.0.1"
+version = "2.0.2"
 description = "Gestion de stock de pellets de bois - API FastAPI + SQLite + Web UI"
 readme = "README.md"
 requires-python = ">=3.12"
